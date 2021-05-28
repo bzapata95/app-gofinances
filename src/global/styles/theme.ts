@@ -7,7 +7,9 @@ export default {
     secondary: "#7159C1",
 
     success: "#21E181",
+    success_light: "rgba(33, 225, 129, 0.2)",
     attention: "#FC4850",
+    attention_light: "rgba(252, 72, 80, 0.2)",
 
     white: "#E5E5E5",
     white_medium: "rgba(229, 229, 229, 0.7)",
