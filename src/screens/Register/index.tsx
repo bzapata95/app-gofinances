@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from "react-native-uuid";
+import { useNavigation } from "@react-navigation/native";
 
 import Button from "../../components/Form/Button";
 import CategorySelectButton from "../../components/Form/CategorySelectButton";
@@ -34,22 +37,26 @@ const schema = Yup.object().shape({
 });
 
 function Register() {
+  const navigation = useNavigation();
   const [category, setCategory] = useState({
     key: "category",
     name: "Categoria",
   });
 
+  const dataKey = "@gofinances:transactions";
+
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ resolver: yupResolver(schema) });
 
   const [transactionType, setTransactionType] = useState("");
 
   const [isOpenCategoryModal, setIsOpenCategoryModal] = useState(false);
 
-  function handleRegister(form: FormData) {
+  async function handleRegister(form: FormData) {
     if (!transactionType) {
       return Alert.alert("Seleccione el tipo de transacción");
     }
@@ -58,13 +65,37 @@ function Register() {
       return Alert.alert("Seleccione una categoría");
     }
 
-    const data = {
+    const newTransaction = {
+      id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
       transactionType,
       category: category.key,
+      date: new Date(),
     };
+
+    try {
+      const data = await AsyncStorage.getItem(dataKey);
+      const currentData = data ? JSON.parse(data) : [];
+
+      const dataFormatted = [...currentData, newTransaction];
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+
+      reset();
+      setTransactionType("");
+      setCategory({
+        key: "category",
+        name: "Categoria",
+      });
+
+      navigation.navigate("Listado");
+    } catch (error) {
+      console.log({ error });
+      Alert.alert("No fue posible guardar");
+    }
   }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Container>
