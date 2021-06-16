@@ -1,6 +1,6 @@
 import { useTheme } from "styled-components";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, Platform } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 
 import AppleSvg from "../../assets/apple.svg";
@@ -31,7 +31,6 @@ export function SignIn() {
     } catch (error) {
       console.log(error);
       Alert.alert("No fue posible conectar con cuenta google");
-    } finally {
       setIsLoading(false);
     }
   }
@@ -42,7 +41,6 @@ export function SignIn() {
     } catch (error) {
       console.log(error);
       Alert.alert("No fue posible conectar con cuenta apple");
-    } finally {
       setIsLoading(false);
     }
   }
@@ -68,11 +66,14 @@ export function SignIn() {
             svg={GoogleSVG}
             onPress={handleSignInWithGoogle}
           />
-          <SignInSocialButton
-            title="Entrar con apple"
-            svg={AppleSvg}
-            onPress={handleSignInWithApple}
-          />
+
+          {Platform.OS === "ios" && (
+            <SignInSocialButton
+              title="Entrar con apple"
+              svg={AppleSvg}
+              onPress={handleSignInWithApple}
+            />
+          )}
         </FooterWrapper>
 
         {isLoading && (

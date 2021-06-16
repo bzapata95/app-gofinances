@@ -24,8 +24,7 @@ import {
 import { categories } from "../../utils/categories";
 import { RFValue } from "react-native-responsive-fontsize";
 import { LoadContainer } from "../Dashboard/styles";
-
-const dataKey = "@gofinances:transactions";
+import { useAuth } from "../../hooks/auth";
 
 interface TransactionData {
   name: string;
@@ -46,12 +45,15 @@ interface CategoryData {
 }
 
 function Resume() {
+  const { user } = useAuth();
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>(
     []
   );
+
+  const dataKey = `@gofinances:transactions_user:${user.id}`;
 
   function handleDateChange(action: "next" | "prev") {
     if (action === "next") {
