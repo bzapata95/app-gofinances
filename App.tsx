@@ -18,9 +18,9 @@ import {
 
 import theme from "./src/global/styles/theme";
 
-import AppRoutes from "./src/routes/app.routes";
-import { SignIn } from "./src/screens/SignIn";
+import { Routes } from "./src/routes";
 import { Providers } from "./src/hooks";
+import { useAuth } from "./src/hooks/auth";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -29,19 +29,18 @@ export default function App() {
     Poppins_700Bold,
   });
 
-  if (!fontsLoaded) {
+  const { userStorageLoading } = useAuth();
+
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />;
   }
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <StatusBar barStyle="light-content" />
-        <Providers>
-          {/* <AppRoutes /> */}
-          <SignIn />
-        </Providers>
-      </NavigationContainer>
+      <StatusBar barStyle="light-content" />
+      <Providers>
+        <Routes />
+      </Providers>
     </ThemeProvider>
   );
 }
