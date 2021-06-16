@@ -1,5 +1,8 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
+
 import * as Google from "expo-google-app-auth";
+import * as AppleAuthentication from "expo-apple-authentication";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface User {
@@ -12,6 +15,7 @@ interface User {
 interface AuthContextData {
   user: User;
   signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -52,8 +56,36 @@ function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
+  const signInWithApple = useCallback(async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      if (credential) {
+        const userLogger = {
+          id: String(credential.user),
+          email: credential.email!,
+          name: credential.fullName!.givenName!,
+          photo: undefined,
+        };
+
+        setUser(userLogger);
+        await AsyncStorage.setItem(
+          "@gofanances:user",
+          JSON.stringify(userLogger)
+        );
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signInWithApple }}>
       {children}
     </AuthContext.Provider>
   );
