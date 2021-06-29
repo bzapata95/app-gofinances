@@ -14,7 +14,7 @@ Gofinance
 [//]: # "Add your gifs/images here:"
 
 <div>
-  <img src="./.github/app.png" alt="Web" width="100%"> 
+  <img src="./.github/app2.png" alt="Web" width="100%"> 
 </div>
 
 <hr />
