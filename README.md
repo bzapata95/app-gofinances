@@ -1,6 +1,6 @@
 <br>
 <h1>
-Gameplay
+Gofinance
 </h1>
 
 <p align="center">It is an application that allows you to record your bank movements and better manage your expenses</p>
